@@ -169,7 +169,6 @@ def main() -> int:
             uv,
             "pip",
             "install",
-            "--offline",
             "--strict",
             "--link-mode",
             "copy",
