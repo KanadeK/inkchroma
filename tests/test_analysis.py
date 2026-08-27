@@ -220,3 +220,16 @@ def test_extract_profile_names_undecodable_image(tmp_path: Path) -> None:
         match=r"sample 'blue-a'.*cannot decode.*export it as PNG or JPEG",
     ):
         extract_profile(sample(image_path), profile_points=64, minimum_signal=2.0)
+
+
+def test_extract_profile_rejects_decodable_format_outside_contract(tmp_path: Path) -> None:
+    image_path = tmp_path / "disguised.png"
+    image = Image.new("RGB", (60, 120), (242, 239, 229))
+    ImageDraw.Draw(image).rectangle((20, 30, 39, 50), fill=(82, 74, 164))
+    image.save(image_path, format="BMP")
+
+    with pytest.raises(
+        InputError,
+        match=r"sample 'blue-a'.*image format BMP is not supported.*export it as PNG or JPEG",
+    ):
+        extract_profile(sample(image_path), profile_points=64, minimum_signal=2.0)

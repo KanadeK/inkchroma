@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import math
 from pathlib import Path
 from typing import Any
 
@@ -16,7 +17,10 @@ def _integer(value: object, field: str) -> int:
 def _number(value: object, field: str) -> float:
     if not isinstance(value, (int, float)) or isinstance(value, bool):
         raise InputError(f"{field} must be a number; fix the project JSON")
-    return float(value)
+    result = float(value)
+    if not math.isfinite(result):
+        raise InputError(f"{field} must be a finite number; fix the project JSON")
+    return result
 
 
 def load_project(path: Path) -> Project:

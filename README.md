@@ -129,8 +129,8 @@ uv run inkchroma compare examples/blue-family/project.json --out demo-output
   correction, automatic lane detection, or peak-model fitting.
 - Band detection is one Delta E threshold and comparison alignment is limited to
   two profile points. Large geometric differences should be rescanned.
-- PNG and JPEG are the documented inputs. Other Pillow-decodable formats are not
-  part of the v0.1.0 compatibility contract.
+- PNG and JPEG are the supported inputs. Other Pillow-decodable formats are
+  rejected in v0.1.0.
 - Output is intentionally non-destructive: its parent must exist and the selected
   output directory must be new.
 

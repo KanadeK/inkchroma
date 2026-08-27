@@ -100,3 +100,14 @@ def test_load_project_rejects_impossible_lane_coordinates(tmp_path: Path) -> Non
 
     with pytest.raises(InputError, match=r"sample 'blue-a'.*x_start must be less than x_end"):
         load_project(path)
+
+
+@pytest.mark.parametrize("value", [float("nan"), float("inf"), float("-inf")])
+def test_load_project_rejects_non_finite_signal_threshold(tmp_path: Path, value: float) -> None:
+    path = write_project(tmp_path, {"minimum_signal_delta_e": value})
+
+    with pytest.raises(
+        InputError,
+        match=r"minimum_signal_delta_e must be a finite number.*fix the project JSON",
+    ):
+        load_project(path)

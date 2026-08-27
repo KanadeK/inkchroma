@@ -136,6 +136,11 @@ def _smooth(points: list[ProfilePoint]) -> tuple[ProfilePoint, ...]:
 def _decode(path: Path, name: str) -> Image.Image:
     try:
         with Image.open(path) as source:
+            if source.format not in {"PNG", "JPEG"}:
+                raise InputError(
+                    f"sample '{name}': image format {source.format or 'unknown'} is not supported; "
+                    "export it as PNG or JPEG"
+                )
             return source.convert("RGB")
     except (UnidentifiedImageError, OSError) as error:
         raise InputError(

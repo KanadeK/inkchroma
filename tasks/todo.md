@@ -50,11 +50,12 @@
 
 ## Task 6: Reproducible release gate
 
-- [ ] Add uv lock, format/lint/type/test/coverage/audit/build/clean-install gate,
+- [x] Add uv lock, format/lint/type/test/coverage/audit/build/clean-install gate,
   CI, tag release assets, MIT license, and changelog.
-- [ ] Acceptance: `uv run python scripts/check.py` is the single green gate and CI
+- [x] Acceptance: `uv run python scripts/check.py` is the single green gate and CI
   runs the same command.
-- [ ] Verify: complete local gate from a synchronized locked environment.
+- [x] Verify: complete locked local gate passed with 26 tests, 90.87% branch
+  coverage, clean lockfile audit, three built assets, and installed CLI examples.
 - Files: `uv.lock`, `scripts/check.py`, `.github/workflows/ci.yml`,
   `.github/workflows/release.yml`, `LICENSE`, `CHANGELOG.md`.
 

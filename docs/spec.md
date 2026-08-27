@@ -115,7 +115,8 @@ an earlier report.
 - Python `>=3.11,<3.15`
 - Pillow `>=11,<13` for real PNG/JPEG decoding
 - Standard library for JSON, CSV, color math, comparison, SVG, HTML, and CLI
-- pytest + pytest-cov, Ruff, mypy, build, pip-audit, and uv for development gates
+- pytest + pytest-cov, Ruff, mypy, build, and uv's lockfile audit for development
+  gates
 
 No web framework, numeric framework, database, or runtime network access.
 
@@ -157,9 +158,12 @@ tasks/todo.md         live verification checklist
 Typed, direct functions with domain names and explicit data flow:
 
 ```python
-def compare_profiles(left: Profile, right: Profile) -> PairDistance:
+def compare_profiles(left: Profile, right: Profile) -> Comparison:
     """Return the best transparent small-shift RMS distance."""
 ```
+
+`right_index_shift` is the right profile index paired with a left index; a positive
+value samples the right profile at a higher Rf position.
 
 - Ruff formatting and linting.
 - Strict mypy for package and gate code.
