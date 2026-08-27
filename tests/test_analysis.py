@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 from PIL import Image, ImageDraw
 
-from inkchroma.analysis import extract_profile, srgb_to_lab
-from inkchroma.model import InputError, LaneSpec, SampleSpec
+from inkchroma.analysis import analyze_project, compare_profiles, extract_profile, srgb_to_lab
+from inkchroma.model import InputError, LaneSpec, Profile, ProfilePoint, Project, SampleSpec
 
 
 def save_strip(
@@ -59,6 +59,114 @@ def test_extract_profile_decodes_image_and_resamples_real_pixels(tmp_path: Path)
     strongest = max(profile.points, key=lambda point: point.strength)
     assert strongest.rf == pytest.approx(0.70, abs=0.12)
     assert profile.peak_signal > 20
+
+
+def test_extract_profile_summarizes_separate_signal_bands(tmp_path: Path) -> None:
+    image_path = tmp_path / "two-bands.png"
+    save_strip(
+        image_path,
+        bands=(
+            (30, 46, (82, 74, 164)),
+            (76, 86, (42, 103, 162)),
+        ),
+    )
+
+    profile = extract_profile(sample(image_path), profile_points=96, minimum_signal=2.0)
+
+    assert len(profile.bands) == 2
+    assert [band.rf_center for band in profile.bands] == pytest.approx([0.29, 0.72], abs=0.08)
+    assert all(band.rf_start <= band.rf_center <= band.rf_end for band in profile.bands)
+    assert all(band.peak_signal >= 2.0 for band in profile.bands)
+
+
+def profile(name: str, values: tuple[float, ...]) -> Profile:
+    points = tuple(
+        ProfilePoint(
+            rf=index / (len(values) - 1),
+            delta_l=value,
+            delta_a=0.0,
+            delta_b=0.0,
+            strength=abs(value),
+            rgb=(80, 90, 150),
+        )
+        for index, value in enumerate(values)
+    )
+    return Profile(name=name, points=points, peak_signal=max(map(abs, values)), bands=())
+
+
+def test_compare_profiles_reports_right_index_shift() -> None:
+    left = profile("left", (0.0, 0.0, 8.0, 3.0, 0.0, 0.0))
+    right = profile("right", (0.0, 0.0, 0.0, 8.0, 3.0, 0.0))
+
+    comparison = compare_profiles(left, right, max_shift=2)
+
+    assert comparison.distance == pytest.approx(0.0)
+    assert comparison.right_index_shift == 1
+
+
+def test_analyze_project_ranks_related_samples_before_different_ink(tmp_path: Path) -> None:
+    blue_a_path = tmp_path / "blue-a.png"
+    blue_b_path = tmp_path / "blue-b.png"
+    green_path = tmp_path / "green.png"
+    save_strip(blue_a_path, bands=((42, 62, (45, 76, 155)),))
+    save_strip(blue_b_path, bands=((43, 63, (48, 78, 152)),))
+    save_strip(green_path, bands=((42, 62, (47, 132, 78)),))
+
+    def named_sample(name: str, image: Path) -> SampleSpec:
+        return SampleSpec(
+            name=name,
+            image=image,
+            lane=LaneSpec(x_start=20, x_end=40),
+            solvent_front_y=10,
+            origin_y=110,
+        )
+
+    project = Project(
+        profile_points=64,
+        minimum_signal_delta_e=2.0,
+        samples=(
+            named_sample("blue-a", blue_a_path),
+            named_sample("blue-b", blue_b_path),
+            named_sample("green", green_path),
+        ),
+    )
+
+    result = analyze_project(project)
+
+    assert [profile.name for profile in result.profiles] == ["blue-a", "blue-b", "green"]
+    assert (result.comparisons[0].left, result.comparisons[0].right) == (
+        "blue-a",
+        "blue-b",
+    )
+    assert result.comparisons[0].distance < result.comparisons[1].distance
+
+
+def test_analyze_project_orders_tied_pairs_by_sample_name(tmp_path: Path) -> None:
+    image_path = tmp_path / "same.png"
+    save_strip(image_path, bands=((42, 62, (45, 76, 155)),))
+
+    def named_sample(name: str) -> SampleSpec:
+        return SampleSpec(
+            name=name,
+            image=image_path,
+            lane=LaneSpec(x_start=20, x_end=40),
+            solvent_front_y=10,
+            origin_y=110,
+        )
+
+    project = Project(
+        profile_points=32,
+        minimum_signal_delta_e=2.0,
+        samples=tuple(named_sample(name) for name in ("zeta", "alpha", "middle")),
+    )
+
+    result = analyze_project(project)
+
+    assert [(pair.left, pair.right) for pair in result.comparisons] == [
+        ("alpha", "middle"),
+        ("alpha", "zeta"),
+        ("middle", "zeta"),
+    ]
 
 
 def test_extract_profile_normalizes_different_image_heights(tmp_path: Path) -> None:

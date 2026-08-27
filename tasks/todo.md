@@ -21,11 +21,11 @@
 
 ## Task 3: Bands and pair distances
 
-- [ ] Detect contiguous visible bands and calculate sorted small-shift RMS pair
+- [x] Detect contiguous visible bands and calculate sorted small-shift RMS pair
   distances.
-- [ ] Acceptance: two related blues rank closer than blue versus green; ties have
+- [x] Acceptance: two related blues rank closer than blue versus green; ties have
   stable name ordering.
-- [ ] Verify: focused analysis tests.
+- [x] Verify: focused analysis tests failed first, then passed (10 tests; 16 total).
 - Files: `src/inkchroma/analysis.py`, `src/inkchroma/model.py`,
   `tests/test_analysis.py`.
 

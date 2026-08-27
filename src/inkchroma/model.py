@@ -41,7 +41,31 @@ class ProfilePoint:
 
 
 @dataclass(frozen=True)
+class Band:
+    rf_start: float
+    rf_end: float
+    rf_center: float
+    peak_signal: float
+    rgb: tuple[int, int, int]
+
+
+@dataclass(frozen=True)
 class Profile:
     name: str
     points: tuple[ProfilePoint, ...]
     peak_signal: float
+    bands: tuple[Band, ...]
+
+
+@dataclass(frozen=True)
+class Comparison:
+    left: str
+    right: str
+    distance: float
+    right_index_shift: int
+
+
+@dataclass(frozen=True)
+class Analysis:
+    profiles: tuple[Profile, ...]
+    comparisons: tuple[Comparison, ...]

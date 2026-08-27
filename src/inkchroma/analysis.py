@@ -1,12 +1,22 @@
 from __future__ import annotations
 
 import math
+from itertools import combinations
 from pathlib import Path
 from typing import cast
 
 from PIL import Image, UnidentifiedImageError
 
-from inkchroma.model import InputError, Profile, ProfilePoint, SampleSpec
+from inkchroma.model import (
+    Analysis,
+    Band,
+    Comparison,
+    InputError,
+    Profile,
+    ProfilePoint,
+    Project,
+    SampleSpec,
+)
 
 Rgb = tuple[float, float, float]
 Lab = tuple[float, float, float]
@@ -128,6 +138,42 @@ def _decode(path: Path, name: str) -> Image.Image:
         ) from error
 
 
+def _summarize_bands(points: tuple[ProfilePoint, ...], minimum_signal: float) -> tuple[Band, ...]:
+    groups: list[list[ProfilePoint]] = []
+    current: list[ProfilePoint] = []
+    for point in points:
+        if point.strength >= minimum_signal:
+            current.append(point)
+        elif current:
+            groups.append(current)
+            current = []
+    if current:
+        groups.append(current)
+
+    bands: list[Band] = []
+    for group in groups:
+        total_signal = sum(point.strength for point in group)
+        bands.append(
+            Band(
+                rf_start=group[0].rf,
+                rf_end=group[-1].rf,
+                rf_center=sum(point.rf * point.strength for point in group) / total_signal,
+                peak_signal=max(point.strength for point in group),
+                rgb=cast(
+                    tuple[int, int, int],
+                    tuple(
+                        round(
+                            sum(point.rgb[channel] * point.strength for point in group)
+                            / total_signal
+                        )
+                        for channel in range(3)
+                    ),
+                ),
+            )
+        )
+    return tuple(bands)
+
+
 def extract_profile(
     sample: SampleSpec,
     *,
@@ -176,4 +222,65 @@ def extract_profile(
             f"{minimum_signal:.2f}); rescan or lower minimum_signal_delta_e; use more contrast "
             "when rescanning"
         )
-    return Profile(name=sample.name, points=points, peak_signal=peak_signal)
+    return Profile(
+        name=sample.name,
+        points=points,
+        peak_signal=peak_signal,
+        bands=_summarize_bands(points, minimum_signal),
+    )
+
+
+def compare_profiles(left: Profile, right: Profile, *, max_shift: int = 2) -> Comparison:
+    candidates: list[Comparison] = []
+    for shift in range(-max_shift, max_shift + 1):
+        left_start = max(0, -shift)
+        left_end = min(len(left.points), len(right.points) - shift)
+        squared_distance = 0.0
+        for left_index in range(left_start, left_end):
+            left_point = left.points[left_index]
+            right_point = right.points[left_index + shift]
+            squared_distance += (
+                (left_point.delta_l - right_point.delta_l) ** 2
+                + (left_point.delta_a - right_point.delta_a) ** 2
+                + (left_point.delta_b - right_point.delta_b) ** 2
+            )
+        distance = math.sqrt(squared_distance / (left_end - left_start))
+        candidates.append(
+            Comparison(
+                left=left.name,
+                right=right.name,
+                distance=distance,
+                right_index_shift=shift,
+            )
+        )
+    return min(
+        candidates,
+        key=lambda comparison: (
+            comparison.distance,
+            abs(comparison.right_index_shift),
+            comparison.right_index_shift,
+        ),
+    )
+
+
+def analyze_project(project: Project) -> Analysis:
+    profiles = tuple(
+        extract_profile(
+            sample,
+            profile_points=project.profile_points,
+            minimum_signal=project.minimum_signal_delta_e,
+        )
+        for sample in project.samples
+    )
+    profiles_by_name = sorted(profiles, key=lambda profile: profile.name)
+    comparisons = tuple(
+        sorted(
+            (compare_profiles(left, right) for left, right in combinations(profiles_by_name, 2)),
+            key=lambda comparison: (
+                comparison.distance,
+                comparison.left,
+                comparison.right,
+            ),
+        )
+    )
+    return Analysis(profiles=profiles, comparisons=comparisons)
