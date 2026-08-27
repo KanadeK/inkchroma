@@ -12,11 +12,11 @@
 
 ## Task 2: Profile extraction
 
-- [ ] Implement real Pillow decoding, paper normalization, Lab conversion,
+- [x] Implement real Pillow decoding, paper normalization, Lab conversion,
   resampling, smoothing, and minimum-signal rejection.
-- [ ] Acceptance: different image sizes normalize to the configured point count;
+- [x] Acceptance: different image sizes normalize to the configured point count;
   a blank strip is rejected without fallback.
-- [ ] Verify: `uv run pytest tests/test_analysis.py -q`.
+- [x] Verify: focused analysis tests failed first, then passed (6 tests; 12 total).
 - Files: `src/inkchroma/analysis.py`, `tests/test_analysis.py`.
 
 ## Task 3: Bands and pair distances

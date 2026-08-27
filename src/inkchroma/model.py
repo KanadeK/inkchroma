@@ -28,3 +28,20 @@ class Project:
     profile_points: int
     minimum_signal_delta_e: float
     samples: tuple[SampleSpec, ...]
+
+
+@dataclass(frozen=True)
+class ProfilePoint:
+    rf: float
+    delta_l: float
+    delta_a: float
+    delta_b: float
+    strength: float
+    rgb: tuple[int, int, int]
+
+
+@dataclass(frozen=True)
+class Profile:
+    name: str
+    points: tuple[ProfilePoint, ...]
+    peak_signal: float
