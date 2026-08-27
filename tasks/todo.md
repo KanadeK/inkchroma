@@ -2,11 +2,11 @@
 
 ## Task 1: Foundation and parser
 
-- [ ] Define package metadata, immutable records, JSON project parsing, and clear
+- [x] Define package metadata, immutable records, JSON project parsing, and clear
   boundary validation.
-- [ ] Acceptance: a valid project resolves image paths; malformed schema,
+- [x] Acceptance: a valid project resolves image paths; malformed schema,
   duplicate names, and impossible coordinates fail with the sample and repair.
-- [ ] Verify: focused parser tests fail first, then pass.
+- [x] Verify: focused parser tests failed first, then passed (6 tests).
 - Files: `pyproject.toml`, `src/inkchroma/model.py`, `src/inkchroma/project.py`,
   `tests/test_project.py`.
 

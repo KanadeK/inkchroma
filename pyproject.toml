@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "inkchroma"
+version = "0.1.0"
+description = "Compare paper chromatography ink strips from ordinary scans."
+requires-python = ">=3.11,<3.15"
+license = "MIT"
+authors = [
+  { name = "KanadeK", email = "121669563+KanadeK@users.noreply.github.com" },
+]
+keywords = ["chromatography", "fountain-pen", "ink", "image-analysis", "cli"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Multimedia :: Graphics",
+]
+dependencies = ["Pillow>=11,<13"]
+
+[project.urls]
+Homepage = "https://github.com/KanadeK/inkchroma"
+Issues = "https://github.com/KanadeK/inkchroma/issues"
+
+[project.scripts]
+inkchroma = "inkchroma.cli:main"
+
+[dependency-groups]
+dev = [
+  "build>=1.2,<2",
+  "mypy>=1.15,<2",
+  "pip-audit>=2.8,<3",
+  "pytest>=8.3,<10",
+  "pytest-cov>=6,<8",
+  "ruff>=0.11,<1",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "--strict-config --strict-markers -p no:cacheprovider --basetemp=.pytest-tmp"
+testpaths = ["tests"]
+pythonpath = ["src", "."]
+
+[tool.coverage.run]
+branch = true
+source = ["inkchroma"]
+
+[tool.coverage.report]
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+files = ["src", "tests", "scripts"]
