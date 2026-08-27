@@ -31,11 +31,11 @@
 
 ## Task 4: Reports and CLI
 
-- [ ] Render JSON, CSV, standalone SVG, and script-free HTML only after successful
+- [x] Render JSON, CSV, standalone SVG, and script-free HTML only after successful
   analysis; expose the installed `inkchroma` command.
-- [ ] Acceptance: all four files agree on sample/pair ordering; failures exit 2 and
+- [x] Acceptance: all four files agree on sample/pair ordering; failures exit 2 and
   leave no output directory.
-- [ ] Verify: CLI integration tests using real subprocesses and images.
+- [x] Verify: three CLI integration tests use real subprocesses and images (19 total).
 - Files: `src/inkchroma/report.py`, `src/inkchroma/cli.py`,
   `src/inkchroma/__main__.py`, `tests/test_cli.py`.
 

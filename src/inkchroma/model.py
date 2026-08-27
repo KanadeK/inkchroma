@@ -69,3 +69,4 @@ class Comparison:
 class Analysis:
     profiles: tuple[Profile, ...]
     comparisons: tuple[Comparison, ...]
+    warnings: tuple[str, ...]

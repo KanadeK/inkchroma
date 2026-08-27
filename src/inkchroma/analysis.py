@@ -21,6 +21,11 @@ from inkchroma.model import (
 Rgb = tuple[float, float, float]
 Lab = tuple[float, float, float]
 
+ANALYSIS_WARNINGS = (
+    "Distances are relative visual comparisons, not chemical identity decisions.",
+    "Results assume comparable sRGB-like scans; ICC color management is not applied.",
+)
+
 
 def srgb_to_lab(rgb: Rgb) -> Lab:
     """Convert an sRGB triplet in the 0..255 range to CIE Lab (D65)."""
@@ -283,4 +288,8 @@ def analyze_project(project: Project) -> Analysis:
             ),
         )
     )
-    return Analysis(profiles=profiles, comparisons=comparisons)
+    return Analysis(
+        profiles=profiles,
+        comparisons=comparisons,
+        warnings=ANALYSIS_WARNINGS,
+    )
