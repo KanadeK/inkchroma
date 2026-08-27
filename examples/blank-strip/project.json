@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "profile_points": 96,
+  "minimum_signal_delta_e": 2.0,
+  "samples": [
+    {
+      "name": "blank-a",
+      "image": "blank-a.png",
+      "lane": {"x_start": 24, "x_end": 56},
+      "solvent_front_y": 18,
+      "origin_y": 220
+    },
+    {
+      "name": "blank-b",
+      "image": "blank-b.png",
+      "lane": {"x_start": 24, "x_end": 56},
+      "solvent_front_y": 18,
+      "origin_y": 220
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "profile_points": 64,
+  "minimum_signal_delta_e": 2.0,
+  "samples": [
+    {
+      "name": "short-scan",
+      "image": "short.png",
+      "lane": {"x_start": 20, "x_end": 44},
+      "solvent_front_y": 12,
+      "origin_y": 126
+    },
+    {
+      "name": "tall-scan",
+      "image": "tall.png",
+      "lane": {"x_start": 30, "x_end": 66},
+      "solvent_front_y": 20,
+      "origin_y": 240
+    }
+  ]
+}

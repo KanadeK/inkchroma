@@ -41,10 +41,11 @@
 
 ## Task 5: Examples and user documentation
 
-- [ ] Add success, boundary, and blank failure fixtures; document install, one-minute
+- [x] Add success, boundary, and blank failure fixtures; document install, one-minute
   use, I/O, limitations, and troubleshooting.
 - [ ] Acceptance: every README command is executable as written.
-- [ ] Verify: source-entry example runs and documented failure message matches.
+- [x] Verify: three real CLI example tests cover success, boundary, and documented
+  blank failure (22 total).
 - Files: `examples/`, `README.md`.
 
 ## Task 6: Reproducible release gate

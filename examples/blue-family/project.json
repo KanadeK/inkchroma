@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "profile_points": 96,
+  "minimum_signal_delta_e": 2.0,
+  "samples": [
+    {
+      "name": "midnight-a",
+      "image": "midnight-a.png",
+      "lane": {"x_start": 24, "x_end": 56},
+      "solvent_front_y": 18,
+      "origin_y": 220
+    },
+    {
+      "name": "midnight-b",
+      "image": "midnight-b.png",
+      "lane": {"x_start": 24, "x_end": 56},
+      "solvent_front_y": 18,
+      "origin_y": 220
+    },
+    {
+      "name": "pine-green",
+      "image": "pine-green.png",
+      "lane": {"x_start": 24, "x_end": 56},
+      "solvent_front_y": 18,
+      "origin_y": 220
+    }
+  ]
+}

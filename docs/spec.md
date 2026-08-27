@@ -56,6 +56,13 @@ Exit codes:
       "lane": {"x_start": 24, "x_end": 56},
       "solvent_front_y": 18,
       "origin_y": 220
+    },
+    {
+      "name": "blue-b",
+      "image": "strips/blue-b.png",
+      "lane": {"x_start": 24, "x_end": 56},
+      "solvent_front_y": 18,
+      "origin_y": 220
     }
   ]
 }
@@ -99,7 +106,9 @@ probability and not an identity decision.
   inline SVG profile plot.
 
 All files are UTF-8 with stable ordering. The tool analyzes everything before it
-creates `OUTPUT_DIR`, so blocking failures leave no partial report.
+creates `OUTPUT_DIR`, so blocking failures leave no partial report. The output
+parent must already exist and `OUTPUT_DIR` must be new; the command never overwrites
+an earlier report.
 
 ## Tech stack
 
